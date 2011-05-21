@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, os
+import sys, os, resource
 import vars, state
 from log import err, debug2
 
@@ -24,7 +24,7 @@ else:
     sh = hashlib.sha1()
 
 while 1:
-    b = os.read(0, 4096)
+    b = os.read(0, resource.getpagesize())
     sh.update(b)
     if not b: break
 
@@ -33,7 +33,7 @@ csum = sh.hexdigest()
 if not vars.TARGET:
     sys.exit(0)
 
-me = os.path.join(vars.STARTDIR, 
+me = os.path.join(vars.STARTDIR,
                   os.path.join(vars.PWD, vars.TARGET))
 f = state.File(name=me)
 changed = (csum != f.csum)
